@@ -7,6 +7,7 @@ import Modal from './modal/Modal';
 import Loader from 'react-loader-spinner';
 import { fetchImages } from '../fetcher.js';
 
+
 class App extends Component {
   state = {
     images: [],
@@ -23,19 +24,11 @@ class App extends Component {
       images: data,
       loading: false
     });
-    document.addEventListener('keydown', this.escFunction);
+    document.addEventListener('keydown', this.closeModal);
   }
 
-  escFunction = event => {
-    if (event.keyCode === 27) {
-      this.setState({
-        isModal: false
-      });
-    }
-  };
-
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.escFunction);
+    document.removeEventListener('keydown', this.closeModal);
   }
 
   handleChange = e => {
@@ -63,7 +56,7 @@ class App extends Component {
   };
 
   closeModal = e => {
-    if (e.currentTarget === e.target) {
+    if (e.currentTarget === e.target || e.key === 'Escape') {
       this.setState({
         isModal: false
       });
@@ -72,14 +65,7 @@ class App extends Component {
 
   loadMore = async currentPage => {
     currentPage++;
-
-    let currentQuery;
-    if (this.state.query) {
-      currentQuery = this.state.query;
-    } else {
-      currentQuery = 'dogs';
-    }
-
+    const currentQuery = this.state.query ? this.state.query : 'kitten'
     const data = await fetchImages(currentPage, currentQuery);
 
     this.setState(prevState => ({
